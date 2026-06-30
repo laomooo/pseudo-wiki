@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>埃隆·马斯克 - 伪维基百科</title>
+    <title>埃隆·马斯克 - 维基百科</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
@@ -19,11 +19,11 @@
     <header class="wiki-header">
         <div class="header-container">
             <div class="logo-section">
-                <a href="/" class="logo">伪维基百科</a>
+                <a href="/" class="logo">维基百科</a>
             </div>
             <nav class="main-nav">
                 <form class="search-box">
-                    <input type="text" placeholder="搜索伪维基百科" id="searchInput">
+                    <input type="text" placeholder="搜索维基百科" id="searchInput">
                     <button type="submit">搜索</button>
                 </form>
             </nav>
@@ -34,13 +34,13 @@
     <nav class="page-tabs">
         <ul class="tabs-left">
             <li class="selected"><a href="#">条目</a></li>
-            <li><a href="#" onclick="openDiscussion()">讨论</a></li>
+            <li><a href="#" onclick="return openDiscussion()">讨论</a></li>
             <li><a href="#">阅读</a></li>
             <li class="dropdown"><a href="#">大陆简体 <span class="arrow">▼</span></a></li>
         </ul>
         <ul class="tabs-right">
             <li><a href="#" class="icon-link" onclick="toggleReadMode()">阅读</a></li>
-            <li><a href="#" class="icon-link" onclick="viewSource()">查看源代码</a></li>
+            <li><a href="#" class="icon-link" onclick="return viewSource()">查看源代码</a></li>
             <li><a href="#" class="icon-link">查看历史</a></li>
             <li class="more-menu"><button>⋮</button></li>
         </ul>
@@ -74,9 +74,9 @@
         <!-- 主内容区 -->
         <main class="article-content" id="articleContent">
             <!-- 文章标题 -->
-            <h1 class="article-title" id="pageTitle">埃隆·马斯克</h1>
+            <h1 class="article-title" id="pageTitle" data-editable="title">埃隆·马斯克</h1>
             <div class="subtitle-line">
-                <span>（重定向自<a href="#">马斯克</a>）</span>
+                <span data-editable="redirect">（重定向自<a href="#">马斯克</a>）</span>
                 <div class="language-selector">
                     文A
                     <select id="languageSelect">
@@ -93,60 +93,64 @@
             <!-- 编辑按钮和工具 -->
             <div class="article-tools">
                 <button class="edit-button" onclick="enableEditMode()" title="编辑此页面">✏️ 编辑</button>
-                <span class="last-edited">最后编辑于 刚刚</span>
+                <span class="last-edited" id="lastEdited">最后编辑于 刚刚</span>
             </div>
 
             <!-- 正文内容区域 -->
             <div class="content-body" id="contentBody">
-                <p class="intro-text" contenteditable="false" id="introParagraph">
+                <p class="intro-text" contenteditable="false" id="introParagraph" data-editable="paragraph">
                     <b>埃隆·里夫·马斯克</b>（英语：Elon Reeve Musk /ˈiːlɒn/；1971年6月28日—），<a href="#">汉名</a><b>马道郎</b><sup>[注 3]</sup>，世界首富、商业大亨、<a href="#">英国皇家学会</a>会士[注 4]、<a href="#">美国工程院</a>院士[注 5]。他是<a href="#">SpaceX</a>的创始人、董事长、首席执行官、首席工程师，特斯拉投资人、首席执行官、产品设计者、前董事长、无职公司创始人，<a href="#">Neuralink</a>、<a href="#">OpenAI</a>联合创始人，同时也是X公司的首席技术官、董事长。2022年马斯克以2190亿美元财富成为世界首富，其后随着旗下公司的股价暴涨，其资产亦同时急剧增加。<sup>[7]</sup>随着SpaceX于2026年6月在美国纳斯达克上市，其拥有的个人财富突破1万亿美元，成为人类史上首位万亿富翁<sup>[8]</sup>。
                 </p>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     马斯克在南非德兰士瓦省比勒陀利亚长大，曾短暂就读于比勒陀利亚大学，后于18岁移居加拿大就读女王大学。两年后，他转学到宾夕法尼亚大学，并获得经济学、物理学的学士学位。1995年，他搬到加利福尼亚州并就读于斯坦福大学，而后决定从商。他与弟弟金巴尔共同创办了网络软件公司Zip2。1999年，康柏公司以3.07亿美元收购了这家初创企业。同年，马斯克联合创办了在线银行X.Com。2000年，该公司与<a href="#">Confinity</a>合并为PayPal。2002年，EBay以15亿美元买下PayPal。
                 </p>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     2002年，马斯克创办SpaceX，并担任董事长、首席执行官、首席技术官，该公司主要负责太空运输、航太制造。2004年，他加入电动车制造商特斯拉，并担任董事长与产品设计师，2008年兼任首席执行官。2006年，他协助创立太阳能服务公司SolarCity，该公司后成为特斯拉子公司特拉斯能源。2015年，他联合创办了非营利公司OpenAI，用于研究和推动友善人工智能。2016年，他联合创办了神经科技公司Neuralink，该公司专注于开发脑机接口。同年，他成立了无聊隧道施工公司，用于研发超回路列车。<sup>[注 5]</sup>2022年10月27日，马斯克以440亿美元收购社交平台Twitter，日后改组为X。2021年10月，美国商业杂志《福布斯》宣布马斯克财富达到2700亿美元，成为该杂志统计史上最富有的人<sup>[9]</sup>。2024年11月，美国总统当选人唐纳德·特朗普宣布委任马斯克为总统高级顾问，领导新创立的政府效率部门<sup>[10]</sup>。
                 </p>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     马斯克被认为曾发表一些误导性或违背科学的言论以及传播关于COVID-19的错误信息而受到批评。此外，马斯克在人工智能、加密货币、公共交通等方面的观点亦受到部分专家的批评。
                 </p>
 
                 <!-- 信息框 -->
                 <div class="infobox" id="infobox">
                     <table class="infobox-table">
-                        <caption>埃隆·马斯克<br><span class="english-name">Elon Musk</span><br><span class="pronunciation">FRS</span></caption>
+                        <caption data-editable="infobox-caption">埃隆·马斯克<br><span class="english-name">Elon Musk</span><br><span class="pronunciation">FRS</span></caption>
                         <tr>
-                            <td colspan="2" class="infobox-image">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/220px-Elon_Musk_Royal_Society_%28crop2%29.jpg"
-                                     alt="埃隆·马斯克" onerror="this.style.display='none'">
-                                <div class="image-caption">2025年的马斯克</div>
+                            <td colspan="2" class="infobox-image" id="infoboxImageCell">
+                                <div class="image-wrapper" id="imageWrapper">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Elon_Musk_Royal_Society_%28crop2%29.jpg/220px-Elon_Musk_Royal_Society_%28crop2%29.jpg"
+                                         alt="埃隆·马斯克" id="infoboxPhoto">
+                                    <div class="photo-upload-hint" id="photoUploadHint" style="display:none;">📷 点击更换照片</div>
+                                </div>
+                                <div class="image-caption" data-editable="infobox-caption-text">2025年的马斯克</div>
+                                <input type="file" id="photoFileInput" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
                             </td>
                         </tr>
                         <tr>
-                            <th colspan="2" class="section-header">个人资料</th>
+                            <th colspan="2" class="section-header" data-editable="infobox-section">个人资料</th>
                         </tr>
                         <tr>
-                            <th scope="row">出生</th>
-                            <td>1971年6月28日（55岁）<br>南非德兰士瓦省比勒陀利亚</td>
+                            <th scope="row" data-editable="infobox-label">出生</th>
+                            <td data-editable="infobox-value" data-field="birth">1971年6月28日（55岁）<br>南非德兰士瓦省比勒陀利亚</td>
                         </tr>
                         <tr>
-                            <th scope="row">公民权</th>
-                            <td>
+                            <th scope="row" data-editable="infobox-label">公民权</th>
+                            <td data-editable="infobox-value" data-field="citizenship">
                                 南非 （1971年起）<br>
                                 加拿大 （1989年起）<br>
                                 美国 （2002年起）
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">政党</th>
-                            <td><a href="#">美国党</a>（2025年至今）</td>
+                            <th scope="row" data-editable="infobox-label">政党</th>
+                            <td data-editable="infobox-value" data-field="party"><a href="#">美国党</a>（2025年至今）</td>
                         </tr>
                         <tr>
-                            <th scope="row">配偶</th>
-                            <td>
+                            <th scope="row" data-editable="infobox-label">配偶</th>
+                            <td data-editable="infobox-value" data-field="spouse">
                                 贾斯廷·马斯克<br>
                                 （2000年结婚—2008年离婚）<br>
                                 妲露拉·莱莉<br>
@@ -155,24 +159,24 @@
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">伴侣</th>
-                            <td>格莱姆斯（2018年–2021年）<sup>[1]</sup></td>
+                            <th scope="row" data-editable="infobox-label">伴侣</th>
+                            <td data-editable="infobox-value" data-field="partner">格莱姆斯（2018年–2021年）<sup>[1]</sup></td>
                         </tr>
                         <tr>
-                            <th scope="row">儿女</th>
-                            <td>14 名<sup>[2][注 1]</sup></td>
+                            <th scope="row" data-editable="infobox-label">儿女</th>
+                            <td data-editable="infobox-value" data-field="children">14 名<sup>[2][注 1]</sup></td>
                         </tr>
                         <tr>
-                            <th scope="row">亲属</th>
-                            <td>
+                            <th scope="row" data-editable="infobox-label">亲属</th>
+                            <td data-editable="infobox-value" data-field="relatives">
                                 <a href="#">托斯卡·马斯克</a>（妹妹）<br>
                                 <a href="#">金巴尔·马斯克</a>（弟弟）<br>
                                 <a href="#">林登·里夫</a>（表弟）
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row">母校</th>
-                            <td>
+                            <th scope="row" data-editable="infobox-label">母校</th>
+                            <td data-editable="infobox-value" data-field="alma_mater">
                                 比勒陀利亚大学<br>
                                 女王大学（1990年–1992年，转学）<br>
                                 宾夕法尼亚大学（理学士、文学士）<br>
@@ -182,92 +186,92 @@
                     </table>
                 </div>
 
-                <h2 id="section-early"><span class="mw-headline">早年</span><span class="mw-editsection">[<a href="#" onclick="editSection('early')">编辑</a>]</span></h2>
+                <h2 id="section-early"><span class="mw-headline" data-editable="heading">早年</span><span class="mw-editsection">[<a href="#" onclick="editSection('early'); return false;">编辑</a>]</span></h2>
 
-                <h3 id="section-childhood"><span class="mw-headline">童年与家庭</span><span class="mw-editsection">[<a href="#" onclick="editSection('childhood')">编辑</a>]</span></h3>
+                <h3 id="section-childhood"><span class="mw-headline" data-editable="heading">童年与家庭</span><span class="mw-editsection">[<a href="#" onclick="editSection('childhood'); return false;">编辑</a>]</span></h3>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     埃隆·马斯克生于1971年6月28日的南非比勒陀利亚，<sup>[11]</sup>有英国与德国血统。<sup>[12][13]</sup>母亲<b>梅耶·马斯克</b>（本姓霍尔德曼）生于加拿大萨斯喀彻温省，成长于南非，是一名模特儿和营养师。<sup>[14][15][16]</sup>父亲埃罗尔·马斯克是一名南非电动机械工程师、飞行员、船员、顾问和开发商。<sup>[17]</sup>马斯克有一名弟弟金巴尔（生于1972年）和一名妹妹托斯卡（生于1974年）。他的外祖父（来自美国的移民）曾创下从开普敦到阿尔及利亚的单程飞行记录。
                 </p>
 
-                <h2 id="section-career"><span class="mw-headline">事业</span><span class="mw-editsection">[<a href="#" onclick="editSection('career')">编辑</a>]</span></h2>
+                <h2 id="section-career"><span class="mw-headline" data-editable="heading">事业</span><span class="mw-editsection">[<a href="#" onclick="editSection('career'); return false;">编辑</a>]</span></h2>
 
-                <h3 id="section-zip2"><span class="mw-headline">Zip2</span><span class="mw-editsection">[<a href="#" onclick="editSection('zip2')">编辑</a>]</span></h3>
+                <h3 id="section-zip2"><span class="mw-headline" data-editable="heading">Zip2</span><span class="mw-editsection">[<a href="#" onclick="editSection('zip2'); return false;">编辑</a>]</span></h3>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     1995年，马斯克与其弟弟金巴尔·马斯克利用父亲借给他们的28000美元创办了Zip2——一个为新闻机构提供在线城市指南的网络软件公司。<sup>[20]</sup>他们在公司租用的办公室里过夜，直到1996年获得风险投资。公司最初名为Global Link Information Network，后来改名为Zip2。
                 </p>
 
-                <h3 id="section-xcom"><span class="mw-headline">X.com与PayPal</span><span class="mw-editsection">[<a href="#" onclick="editSection('xcom')">编辑</a>]</span></h3>
+                <h3 id="section-xcom"><span class="mw-headline" data-editable="heading">X.com与PayPal</span><span class="mw-editsection">[<a href="#" onclick="editSection('xcom'); return false;">编辑</a>]</span></h3>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     1999年3月，马斯克用出售Zip2所得的资金创办了X.com——一家在线金融服务和电子邮件支付公司。<sup>[25][26]</sup>一年后，该公司与Confinity合并，后者拥有一项名为PayPal的汇款服务。合并后的公司采用了PayPal这个名称。
                 </p>
 
-                <h3 id="section-spacex"><span class="mw-headline">SpaceX</span><span class="mw-editsection">[<a href="#" onclick="editSection('spacex')">编辑</a>]</span></h3>
+                <h3 id="section-spacex"><span class="mw-headline" data-editable="heading">SpaceX</span><span class="mw-editsection">[<a href="#" onclick="editSection('spacex'); return false;">编辑</a>]</span></h3>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     2002年，马斯克创立太空探索技术公司（SpaceX），旨在降低太空运输成本并实现火星殖民。<sup>[31]</sup>他是该公司的首席执行官兼首席技术官。SpaceX开发了猎鹰系列运载火箭和龙飞船。
                 </p>
 
-                <h2 id="section-politics"><span class="mw-headline">政治参与</span><span class="mw-editsection">[<a href="#" onclick="editSection('politics')">编辑</a>]</span></h2>
+                <h2 id="section-politics"><span class="mw-headline" data-editable="heading">政治参与</span><span class="mw-editsection">[<a href="#" onclick="editSection('politics'); return false;">编辑</a>]</span></h2>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     马斯克的政治立场经历了显著变化。早期他自称温和派，支持民主党候选人，包括奥巴马和希拉里·克林顿。然而近年来，他的立场明显右倾，公开表达对保守派政策的支持，并在2024年总统选举中积极支持唐纳德·特朗普。
                 </p>
 
-                <h2 id="section-personal"><span class="mw-headline">个人生活</span><span class="mw-editsection">[<a href="#" onclick="editSection('personal')">编辑</a>]</span></h2>
+                <h2 id="section-personal"><span class="mw-headline" data-editable="heading">个人生活</span><span class="mw-editsection">[<a href="#" onclick="editSection('personal'); return false;">编辑</a>]</span></h2>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     马斯克的个人生活备受媒体关注。他曾三次婚姻，育有至少14名子女。他与加拿大作家贾斯廷·马斯克于2000年结婚，2008年离婚；随后与英国演员妲露拉·莱莉两次结婚又离婚；2018年至2021年期间与加拿大音乐人格莱姆斯交往。
                 </p>
 
-                <h2 id="section-wealth"><span class="mw-headline">财富</span><span class="mw-editsection">[<a href="#" onclick="editSection('wealth')">编辑</a>]</span></h2>
+                <h2 id="section-wealth"><span class="mw-headline" data-editable="heading">财富</span><span class="mw-editsection">[<a href="#" onclick="editSection('wealth'); return false;">编辑</a>]</span></h2>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     马斯克多次登上《福布斯》全球富豪榜首位。截至2025年初，其净资产估计超过1万亿美元，主要来源于他在Tesla、SpaceX和X公司的持股。
                 </p>
 
-                <h2 id="section-views"><span class="mw-headline">观点</span><span class="mw-editsection">[<a href="#" onclick="editSection('views')">编辑</a>]</span></h2>
+                <h2 id="section-views"><span class="mw-headline" data-editable="heading">观点</span><span class="mw-editsection">[<a href="#" onclick="editSection('views'); return false;">编辑</a>]</span></h2>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     马斯克在多个领域发表过引人关注的观点，包括人工智能安全、火星殖民、社交媒体管理、加密货币以及公共卫生等领域。部分观点引发了广泛讨论和争议。
                 </p>
 
-                <h2 id="section-controversy"><span class="mw-headline">争议</span><span class="mw-editsection">[<a href="#" onclick="editSection('controversy')">编辑</a>]</span></h2>
+                <h2 id="section-controversy"><span class="mw-headline" data-editable="heading">争议</span><span class="mw-editsection">[<a href="#" onclick="editSection('controversy'); return false;">编辑</a>]</span></h2>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     马斯克因其公开言论和行为多次陷入争议。这包括关于COVID-19的不实声明、在社交媒体平台上的争议性帖子、对员工和管理层的处理方式，以及在收购Twitter后的多项决策引发的公众讨论。
                 </p>
 
-                <h2 id="section-culture"><span class="mw-headline">流行文化</span><span class="mw-editsection">[<a href="#" onclick="editSection('culture')">编辑</a>]</span></h2>
+                <h2 id="section-culture"><span class="mw-headline" data-editable="heading">流行文化</span><span class="mw-editsection">[<a href="#" onclick="editSection('culture'); return false;">编辑</a>]</span></h2>
 
-                <p contenteditable="false">
+                <p contenteditable="false" data-editable="paragraph">
                     马斯克在流行文化中也有重要影响力。他曾在《钢铁侠2》、《辛普森家庭》等多部影视作品中客串演出，也经常出现在各类访谈节目和纪录片中。
                 </p>
 
-                <h2 id="section-notes"><span class="mw-headline">注释</span><span class="mw-editsection">[<a href="#" onclick="editSection('notes')">编辑</a>]</span></h2>
+                <h2 id="section-notes"><span class="mw-headline" data-editable="heading">注释</span><span class="mw-editsection">[<a href="#" onclick="editSection('notes'); return false;">编辑</a>]</span></h2>
 
-                <div class="reflist">
+                <div class="reflist" data-editable="block">
                     <ol class="references">
-                        <li id="cite_note-1">^ 具体注释内容...</li>
+                        <li id="cite_note-1" data-editable="list-item">^ 具体注释内容...</li>
                     </ol>
                 </div>
 
-                <h2 id="section-references"><span class="mw-headline">参考资料</span><span class="mw-editsection">[<a href="#" onclick="editSection('references')">编辑</a>]</span></h2>
+                <h2 id="section-references"><span class="mw-headline" data-editable="heading">参考资料</span><span class="mw-editsection">[<a href="#" onclick="editSection('references'); return false;">编辑</a>]</span></h2>
 
-                <div class="reflist references-small">
+                <div class="reflist references-small" data-editable="block">
                     <ol class="references">
-                        <li id="cite_ref-1">^ 参考资料1</li>
-                        <li id="cite_ref-2">^ 参考资料2</li>
+                        <li id="cite_ref-1" data-editable="list-item">^ 参考资料1</li>
+                        <li id="cite_ref-2" data-editable="list-item">^ 参考资料2</li>
                     </ol>
                 </div>
 
-                <h2 id="section-links"><span class="mw-headline">外部链接</span><span class="mw-editsection">[<a href="#" onclick="editSection('links')">编辑</a>]</span></h2>
+                <h2 id="section-links"><span class="mw-headline" data-editable="heading">外部链接</span><span class="mw-editsection">[<a href="#" onclick="editSection('links'); return false;">编辑</a>]</span></h2>
 
-                <ul>
-                    <li><a href="https://www.tesla.com">Tesla 官网</a></li>
-                    <li><a href="https://www.spacex.com">SpaceX 官网</a></li>
+                <ul data-editable="block">
+                    <li data-editable="list-item"><a href="https://www.tesla.com">Tesla 官网</a></li>
+                    <li data-editable="list-item"><a href="https://www.spacex.com">SpaceX 官网</a></li>
                 </ul>
             </div>
 
@@ -279,12 +283,12 @@
 
             <!-- 底部分类和导航 -->
             <footer class="article-footer">
-                <div class="categories">
+                <div class="categories" data-editable="block">
                     <span class="cat-label">分类：</span>
-                    <a href="#">人物传记</a> |
-                    <a href="#">企业家</a> |
-                    <a href="#">工程师</a> |
-                    <a href="#">南非裔美国人</a>
+                    <a href="#" data-editable="list-item">人物传记</a> |
+                    <a href="#" data-editable="list-item">企业家</a> |
+                    <a href="#" data-editable="list-item">工程师</a> |
+                    <a href="#" data-editable="list-item">南非裔美国人</a>
                 </div>
             </footer>
         </main>
@@ -339,21 +343,6 @@
         </aside>
     </div>
 
-    <!-- 隐蔽的二维码悬浮按钮 -->
-    <div class="qr-float-btn" id="qrFloatBtn" title="扫码访问本页面" onclick="toggleQRCode()">
-        📱
-    </div>
-
-    <!-- 二维码弹窗 -->
-    <div class="qr-modal" id="qrModal" style="display: none;">
-        <div class="qr-modal-content">
-            <span class="close-qr" onclick="toggleQRCode()">&times;</span>
-            <h3>扫码访问本页面</h3>
-            <div id="qrCodeContainer"></div>
-            <p class="qr-hint">使用手机扫描二维码即可访问</p>
-        </div>
-    </div>
-
     <!-- 加载遮罩 -->
     <div class="loading-overlay" id="loadingOverlay" style="display: none;">
         <div class="spinner"></div>
@@ -363,7 +352,6 @@
     <!-- 通知消息 -->
     <div class="notification" id="notification" style="display: none;"></div>
 
-    <script src="js/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/app.js"></script>
 </body>

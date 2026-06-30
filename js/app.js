@@ -1,6 +1,6 @@
 /**
- * 伪维基百科 - 主应用逻辑
- * 功能：编辑内容、数据库集成、二维码生成、界面交互
+ * 维基百科 - 主应用逻辑
+ * 功能：全页面编辑、数据库集成、照片上传、界面交互
  */
 
 // ==================== 配置 ====================
@@ -25,18 +25,82 @@ function initSupabase() {
 }
 
 // ==================== 数据管理 ====================
-// 文章数据模型
 class ArticleManager {
     constructor() {
         this.currentArticle = null;
-        this.isDirty = false;
         this.originalContent = '';
+        this.originalPhotoDataUrl = '';
+    }
+
+    // 保存文章全量快照
+    snapshotPage() {
+        return {
+            title: document.getElementById('pageTitle').textContent.trim(),
+            subtitle: document.querySelector('[data-editable="redirect"]')?.innerHTML || '',
+            paragraphs: Array.from(document.querySelectorAll('[data-editable="paragraph"]')).map(p => p.innerHTML),
+            headings: Array.from(document.querySelectorAll('[data-editable="heading"]')).map(h => h.textContent.trim()),
+            infoboxCaption: document.querySelector('.infobox-table caption')?.innerHTML || '',
+            infoboxCaptionText: document.querySelector('[data-editable="infobox-caption-text"]')?.innerHTML || '',
+            infoboxSection: document.querySelector('[data-editable="infobox-section"]')?.textContent.trim() || '',
+            infoboxLabels: Array.from(document.querySelectorAll('[data-editable="infobox-label"]')).map(th => th.textContent.trim()),
+            infoboxValues: Array.from(document.querySelectorAll('[data-editable="infobox-value"]')).map(td => td.innerHTML),
+            infoboxFields: Array.from(document.querySelectorAll('[data-editable="infobox-value"]')).map(td => td.getAttribute('data-field') || ''),
+            photoUrl: document.getElementById('infoboxPhoto')?.src || '',
+            notes: Array.from(document.querySelectorAll('[data-editable="list-item"]')).map(li => li.innerHTML),
+            categories: document.querySelector('.categories')?.innerHTML || '',
+            lastEdited: document.getElementById('lastEdited')?.textContent || ''
+        };
+    }
+
+    // 恢复页面快照
+    restoreSnapshot(snapshot) {
+        if (!snapshot || !snapshot.title) return;
+
+        document.getElementById('pageTitle').textContent = snapshot.title;
+
+        const subtitle = document.querySelector('[data-editable="redirect"]');
+        if (subtitle && snapshot.subtitle) subtitle.innerHTML = snapshot.subtitle;
+
+        const paragraphs = document.querySelectorAll('[data-editable="paragraph"]');
+        if (snapshot.paragraphs) {
+            snapshot.paragraphs.forEach((html, i) => {
+                if (paragraphs[i]) paragraphs[i].innerHTML = html;
+            });
+        }
+
+        if (snapshot.photoUrl) {
+            const img = document.getElementById('infoboxPhoto');
+            if (img) img.src = snapshot.photoUrl;
+        }
+
+        if (snapshot.infoboxCaption) {
+            const cap = document.querySelector('.infobox-table caption');
+            if (cap) cap.innerHTML = snapshot.infoboxCaption;
+        }
+
+        if (snapshot.infoboxCaptionText) {
+            const capText = document.querySelector('[data-editable="infobox-caption-text"]');
+            if (capText) capText.innerHTML = snapshot.infoboxCaptionText;
+        }
+
+        if (snapshot.infoboxSection) {
+            const sec = document.querySelector('[data-editable="infobox-section"]');
+            if (sec) sec.textContent = snapshot.infoboxSection;
+        }
+
+        if (snapshot.infoboxValues) {
+            const values = document.querySelectorAll('[data-editable="infobox-value"]');
+            snapshot.infoboxValues.forEach((html, i) => {
+                if (values[i]) values[i].innerHTML = html;
+            });
+        }
+
+        document.getElementById('lastEdited').textContent = snapshot.lastEdited || '最后编辑于 刚刚';
     }
 
     // 获取文章数据
     async getArticle(articleId) {
         showLoading(true);
-
         try {
             if (supabaseClient) {
                 const { data, error } = await supabaseClient
@@ -45,66 +109,84 @@ class ArticleManager {
                     .eq('id', articleId)
                     .single();
 
-                if (error) throw error;
+                if (error && error.code !== 'PGRST116') throw error;
 
-                this.currentArticle = data;
-                this.originalContent = JSON.stringify(data.content);
+                if (data && data.content) {
+                    this.currentArticle = data;
+                    this.originalContent = JSON.stringify(data.content);
+                    // 恢复保存的内容
+                    if (data.content.snapshot) {
+                        this.restoreSnapshot(data.content.snapshot);
+                    }
+                    showLoading(false);
+                    return data;
+                }
+            }
+
+            // Fallback: localStorage
+            const localData = localStorage.getItem(`wiki_${articleId}`);
+            if (localData) {
+                const parsed = JSON.parse(localData);
+                this.currentArticle = parsed;
+                this.originalContent = JSON.stringify(parsed.content);
+                if (parsed.content && parsed.content.snapshot) {
+                    this.restoreSnapshot(parsed.content.snapshot);
+                }
                 showLoading(false);
-                return data;
-            } else {
-                // 使用 localStorage 作为后备
-                const localData = localStorage.getItem(`wiki_${articleId}`);
-                const article = localData ? JSON.parse(localData) : this.getDefaultArticle();
-                this.currentArticle = article;
-                this.originalContent = JSON.stringify(article.content);
-                showLoading(false);
-                return article;
+                return parsed;
             }
         } catch (error) {
             console.error('获取文章失败:', error);
-            showLoading(false);
-
-            // 返回默认文章
-            const defaultArticle = this.getDefaultArticle();
-            this.currentArticle = defaultArticle;
-            return defaultArticle;
         }
+
+        // 使用默认页面（页面上已有的内容）
+        this.currentArticle = {
+            id: articleId,
+            title: document.getElementById('pageTitle').textContent,
+            content: { snapshot: this.snapshotPage() }
+        };
+        this.originalContent = JSON.stringify(this.currentArticle.content);
+        showLoading(false);
+        return this.currentArticle;
     }
 
     // 保存文章
-    async saveArticle(content) {
+    async saveArticle() {
         showLoading(true);
+
+        const snapshot = this.snapshotPage();
+        const now = new Date();
+        snapshot.lastEdited = '最后编辑于 ' + now.toLocaleString('zh-CN');
 
         const articleData = {
             id: CONFIG.defaultArticleId,
-            title: document.getElementById('pageTitle').textContent,
-            content: content,
-            updated_at: new Date().toISOString()
+            title: snapshot.title,
+            content: { snapshot: snapshot },
+            updated_at: now.toISOString()
         };
 
         try {
             if (supabaseClient) {
-                const { data, error } = await supabaseClient
+                const { error } = await supabaseClient
                     .from('wiki_articles')
                     .upsert(articleData, { onConflict: 'id' });
 
                 if (error) throw error;
 
+                document.getElementById('lastEdited').textContent = snapshot.lastEdited;
                 showNotification('✅ 文章已保存到云端', 'success');
-                this.isDirty = false;
-                this.originalContent = JSON.stringify(content);
+                this.originalContent = JSON.stringify(articleData.content);
                 showLoading(false);
                 return true;
             } else {
-                // 保存到 localStorage
                 localStorage.setItem(`wiki_${CONFIG.defaultArticleId}`, JSON.stringify({
                     ...articleData,
-                    created_at: new Date().toISOString()
+                    created_at: now.toISOString()
                 }));
 
+                document.getElementById('lastEdited').textContent = snapshot.lastEdited;
                 showNotification('💾 文章已保存（本地模式）', 'success');
-                this.isDirty = false;
-                this.originalContent = JSON.stringify(content);
+                this.originalContent = JSON.stringify(articleData.content);
                 showLoading(false);
                 return true;
             }
@@ -115,69 +197,116 @@ class ArticleManager {
             return false;
         }
     }
-
-    // 默认文章数据
-    getDefaultArticle() {
-        return {
-            id: CONFIG.defaultArticleId,
-            title: '埃隆·马斯克',
-            created_at: new Date().toISOString(),
-            content: {}
-        };
-    }
 }
 
 const articleManager = new ArticleManager();
 
 // ==================== 编辑功能 ====================
 let isEditMode = false;
+let pendingPhotoDataUrl = null;
 
 function enableEditMode() {
     isEditMode = true;
+    pendingPhotoDataUrl = null;
 
-    // 使所有段落可编辑
-    const paragraphs = document.querySelectorAll('#contentBody p[contenteditable="false"]');
-    paragraphs.forEach(p => p.setAttribute('contenteditable', 'true'));
+    // 1. 启用页面标题编辑
+    const title = document.getElementById('pageTitle');
+    title.setAttribute('contenteditable', 'true');
+    title.focus();
 
-    // 显示保存/取消按钮
+    // 2. 启用副标题编辑
+    const subtitle = document.querySelector('[data-editable="redirect"]');
+    if (subtitle) subtitle.setAttribute('contenteditable', 'true');
+
+    // 3. 启用所有段落编辑
+    document.querySelectorAll('[data-editable="paragraph"]').forEach(p => {
+        p.setAttribute('contenteditable', 'true');
+    });
+
+    // 4. 启用所有标题编辑
+    document.querySelectorAll('[data-editable="heading"]').forEach(h => {
+        h.setAttribute('contenteditable', 'true');
+        h.style.outline = '2px dashed #3366cc';
+        h.style.outlineOffset = '3px';
+        h.style.background = '#fffbf0';
+        h.style.borderRadius = '3px';
+    });
+
+    // 5. 启用 Infobox 编辑
+    const infobox = document.getElementById('infobox');
+    infobox.classList.add('editing-mode');
+    document.querySelectorAll('[data-editable="infobox-caption"]').forEach(el => el.setAttribute('contenteditable', 'true'));
+    document.querySelectorAll('[data-editable="infobox-caption-text"]').forEach(el => el.setAttribute('contenteditable', 'true'));
+    document.querySelectorAll('[data-editable="infobox-section"]').forEach(el => el.setAttribute('contenteditable', 'true'));
+    document.querySelectorAll('[data-editable="infobox-label"]').forEach(el => el.setAttribute('contenteditable', 'true'));
+    document.querySelectorAll('[data-editable="infobox-value"]').forEach(el => el.setAttribute('contenteditable', 'true'));
+
+    // 6. 显示照片上传提示
+    document.getElementById('photoUploadHint').style.display = 'block';
+    document.getElementById('imageWrapper').onclick = function() { document.getElementById('photoFileInput').click(); };
+
+    // 7. 启用列表项编辑
+    document.querySelectorAll('[data-editable="list-item"]').forEach(el => el.setAttribute('contenteditable', 'true'));
+    document.querySelectorAll('[data-editable="block"]').forEach(el => {
+        el.style.outline = '2px dashed #3366cc';
+        el.style.outlineOffset = '3px';
+    });
+
+    // 8. 显示保存/取消按钮
     document.getElementById('editActions').style.display = 'flex';
 
-    // 更新编辑按钮状态
+    // 9. 更新编辑按钮状态
     const editBtn = document.querySelector('.edit-button');
     editBtn.textContent = '📝 编辑中...';
     editBtn.style.background = '#d4edda';
     editBtn.style.borderColor = '#28a745';
 
-    showNotification('✏️ 已进入编辑模式，点击文本即可修改', 'success');
-
-    // 滚动到顶部方便编辑
+    showNotification('✏️ 编辑模式：所有内容（标题、正文、信息栏、图片）均可修改', 'success');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+        showNotification('⚠️ 请选择图片文件', 'error');
+        return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+        showNotification('⚠️ 图片不能超过 10MB', 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        pendingPhotoDataUrl = e.target.result;
+        document.getElementById('infoboxPhoto').src = pendingPhotoDataUrl;
+        showNotification('📷 照片已更新，保存后生效', 'success');
+    };
+    reader.onerror = function() {
+        showNotification('❌ 图片读取失败', 'error');
+    };
+    reader.readAsDataURL(file);
 }
 
 async function saveContent() {
     if (!isEditMode) return;
 
-    // 收集所有可编辑内容
-    const editableElements = document.querySelectorAll('#contentBody [contenteditable="true"]');
-    const content = {};
+    // 如果有待上传的照片，先存入快照
+    if (pendingPhotoDataUrl) {
+        const img = document.getElementById('infoboxPhoto');
+        img.src = pendingPhotoDataUrl;
+    }
 
-    editableElements.forEach((el, index) => {
-        content[`paragraph_${index}`] = {
-            html: el.innerHTML,
-            text: el.textContent
-        };
-    });
-
-    // 保存到数据库/存储
-    const success = await articleManager.saveArticle(content);
-
+    const success = await articleManager.saveArticle();
     if (success) {
         exitEditMode();
     }
 }
 
 function cancelEdit() {
-    // 可选：恢复原始内容
     if (confirm('确定要放弃所有更改吗？')) {
         location.reload();
     } else {
@@ -188,18 +317,53 @@ function cancelEdit() {
 function exitEditMode() {
     isEditMode = false;
 
-    // 禁用所有段落的编辑状态
-    const paragraphs = document.querySelectorAll('#contentBody [contenteditable="true"]');
-    paragraphs.forEach(p => p.setAttribute('contenteditable', 'false'));
+    // 1. 禁用标题编辑
+    const title = document.getElementById('pageTitle');
+    title.setAttribute('contenteditable', 'false');
 
-    // 隐藏保存/取消按钮
+    // 2. 禁用副标题编辑
+    const subtitle = document.querySelector('[data-editable="redirect"]');
+    if (subtitle) subtitle.setAttribute('contenteditable', 'false');
+
+    // 3. 禁用段落编辑
+    document.querySelectorAll('[data-editable="paragraph"]').forEach(p => {
+        p.setAttribute('contenteditable', 'false');
+    });
+
+    // 4. 禁用标题编辑并移除样式
+    document.querySelectorAll('[data-editable="heading"]').forEach(h => {
+        h.setAttribute('contenteditable', 'false');
+        h.style.outline = '';
+        h.style.outlineOffset = '';
+        h.style.background = '';
+        h.style.borderRadius = '';
+    });
+
+    // 5. 禁用 Infobox
+    document.getElementById('infobox').classList.remove('editing-mode');
+    document.querySelectorAll('.infobox [contenteditable="true"]').forEach(el => el.setAttribute('contenteditable', 'false'));
+
+    // 6. 隐藏照片上传提示
+    document.getElementById('photoUploadHint').style.display = 'none';
+    document.getElementById('imageWrapper').onclick = null;
+
+    // 7. 禁用列表项
+    document.querySelectorAll('[data-editable="list-item"]').forEach(el => el.setAttribute('contenteditable', 'false'));
+    document.querySelectorAll('[data-editable="block"]').forEach(el => {
+        el.style.outline = '';
+        el.style.outlineOffset = '';
+    });
+
+    // 8. 隐藏保存按钮
     document.getElementById('editActions').style.display = 'none';
 
-    // 恢复编辑按钮
+    // 9. 恢复编辑按钮
     const editBtn = document.querySelector('.edit-button');
     editBtn.textContent = '✏️ 编辑';
     editBtn.style.background = '';
     editBtn.style.borderColor = '';
+
+    pendingPhotoDataUrl = null;
 }
 
 function editSection(sectionId) {
@@ -208,60 +372,7 @@ function editSection(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
         section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        // 找到该section后的第一个可编辑元素并聚焦
-        const nextEditable = section.nextElementSibling?.querySelector('[contenteditable="true"]') ||
-                           section.parentElement?.nextElementSibling?.querySelector('[contenteditable="true"]');
-        if (nextEditable) {
-            nextEditable.focus();
-        }
     }
-}
-
-// ==================== 二维码功能 ====================
-let qrCodeInstance = null;
-
-function toggleQRCode() {
-    const modal = document.getElementById('qrModal');
-    const isVisible = modal.style.display !== 'none';
-
-    if (isVisible) {
-        modal.style.display = 'none';
-    } else {
-        modal.style.display = 'flex';
-        generateQRCode();
-    }
-}
-
-function generateQRCode() {
-    const container = document.getElementById('qrCodeContainer');
-    container.innerHTML = ''; // 清空之前的二维码
-
-    // 获取当前页面URL（优先使用实际部署URL）
-    let pageUrl = window.location.href;
-
-    // 如果是localhost或IP地址，尝试使用更友好的提示
-    if (pageUrl.includes('localhost') || pageUrl.includes('127.0.0.1')) {
-        pageUrl = window.location.origin + window.location.pathname;
-    }
-
-    // 生成QRCode
-    QRCode.toCanvas(pageUrl, {
-        width: 220,
-        margin: 2,
-        color: {
-            dark: '#000000',
-            light: '#ffffff'
-        },
-        errorCorrectionLevel: 'H'
-    }, function(error, canvas) {
-        if (error) {
-            console.error('QRCode生成失败:', error);
-            container.innerHTML = '<p style="color:red;">二维码生成失败</p>';
-            return;
-        }
-        canvas.id = 'qrcodeCanvas';
-        container.appendChild(canvas);
-    });
 }
 
 // ==================== 目录导航 ====================
@@ -269,19 +380,16 @@ function toggleTOC() {
     const sidebar = document.getElementById('tocSidebar');
     const btn = document.querySelector('.toggle-toc');
 
-    // 移动端：侧滑显示
     if (window.innerWidth <= 768) {
         sidebar.classList.toggle('active');
         if (sidebar.classList.contains('active')) {
             btn.textContent = '关闭';
-            // 添加遮罩层
             addOverlay();
         } else {
             btn.textContent = '隐藏';
             removeOverlay();
         }
     } else {
-        // 桌面端：折叠/展开
         const list = document.getElementById('tocList');
         const isHidden = list.style.display === 'none';
         list.style.display = isHidden ? 'block' : 'none';
@@ -314,10 +422,7 @@ document.addEventListener('click', function(e) {
         const targetElement = document.querySelector(targetId);
         if (targetElement) {
             targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            // 高亮目标章节
             highlightSection(targetElement);
-
-            // 移动端自动关闭目录
             if (window.innerWidth <= 768 && document.getElementById('tocSidebar').classList.contains('active')) {
                 toggleTOC();
             }
@@ -327,58 +432,32 @@ document.addEventListener('click', function(e) {
 
 function highlightSection(element) {
     element.style.background = 'rgba(51,102,204,0.1)';
-    setTimeout(() => {
-        element.style.background = '';
-    }, 1500);
+    setTimeout(() => { element.style.background = ''; }, 1500);
 }
 
 // ==================== 外观设置 ====================
 function changeFontSize(size) {
-    const body = document.body;
-    body.classList.remove('font-small', 'font-standard', 'font-large');
-    body.classList.add(`font-${size}`);
-
+    const contentBody = document.querySelector('.content-body');
     switch(size) {
-        case 'small':
-            document.querySelector('.content-body').style.fontSize = '13px';
-            break;
-        case 'standard':
-            document.querySelector('.content-body').style.fontSize = '14px';
-            break;
-        case 'large':
-            document.querySelector('.content-body').style.fontSize = '16px';
-            break;
+        case 'small': contentBody.style.fontSize = '13px'; break;
+        case 'standard': contentBody.style.fontSize = '14px'; break;
+        case 'large': contentBody.style.fontSize = '16px'; break;
     }
     savePreference('fontSize', size);
 }
 
 function changeWidth(width) {
     const container = document.querySelector('.main-container');
-    container.classList.remove('width-standard', 'width-wide');
-    container.classList.add(`width-${width}`);
-
-    switch(width) {
-        case 'standard':
-            container.style.maxWidth = '1400px';
-            break;
-        case 'wide':
-            container.style.maxWidth = '95%';
-            break;
-    }
+    container.style.maxWidth = width === 'wide' ? '95%' : '1400px';
     savePreference('width', width);
 }
 
 function changeTheme(theme) {
-    const body = document.body;
-
     if (theme === 'auto') {
-        body.removeAttribute('data-theme');
-        body.classList.add('theme-auto');
+        document.body.removeAttribute('data-theme');
     } else {
-        body.setAttribute('data-theme', theme);
-        body.classList.remove('theme-auto');
+        document.body.setAttribute('data-theme', theme);
     }
-
     savePreference('theme', theme);
 }
 
@@ -390,13 +469,9 @@ function loadPreferences() {
     const fontSize = localStorage.getItem('wiki_pref_fontSize') || 'standard';
     const width = localStorage.getItem('wiki_pref_width') || 'standard';
     const theme = localStorage.getItem('wiki_pref_theme') || 'light';
-
-    // 应用保存的设置
     changeFontSize(fontSize);
     changeWidth(width);
     changeTheme(theme);
-
-    // 更新UI选中状态
     document.querySelectorAll(`input[name="fontSize"][value="${fontSize}"]`)[0]?.setAttribute('checked', '');
     document.querySelectorAll(`input[name="width"][value="${width}"]`)[0]?.setAttribute('checked', '');
     document.querySelectorAll(`input[name="theme"][value="${theme}"]`)[0]?.setAttribute('checked', '');
@@ -404,8 +479,7 @@ function loadPreferences() {
 
 // ==================== 工具函数 ====================
 function showLoading(show) {
-    const overlay = document.getElementById('loadingOverlay');
-    overlay.style.display = show ? 'flex' : 'none';
+    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
 }
 
 function showNotification(message, type = '') {
@@ -413,11 +487,7 @@ function showNotification(message, type = '') {
     notification.textContent = message;
     notification.className = `notification ${type}`;
     notification.style.display = 'block';
-
-    // 3秒后自动消失
-    setTimeout(() => {
-        notification.style.display = 'none';
-    }, 3000);
+    setTimeout(() => { notification.style.display = 'none'; }, 3000);
 }
 
 function openDiscussion() {
@@ -426,7 +496,6 @@ function openDiscussion() {
 }
 
 function viewSource() {
-    // 显示HTML源代码
     const source = document.documentElement.outerHTML;
     const newWindow = window.open('', '_blank');
     newWindow.document.write(`<pre style="white-space:pre-wrap;word-wrap:break-word;padding:20px;font-family:monospace;font-size:12px;">${escapeHtml(source)}</pre>`);
@@ -449,15 +518,11 @@ document.querySelector('.search-box').addEventListener('submit', function(e) {
     e.preventDefault();
     const query = document.getElementById('searchInput').value.trim();
     if (query) {
-        showNotification(`🔍 正在搜索: "${query}"`, 'success');
-        // 这里可以添加实际的搜索逻辑
-        setTimeout(() => {
-            showNotification('搜索功能开发中，请使用浏览器查找(Ctrl+F)', 'error');
-        }, 500);
+        showNotification('搜索功能开发中，请使用浏览器查找 (Ctrl+F)', 'error');
     }
 });
 
-// ==================== 关闭通知栏 ================= */
+// ==================== 关闭通知栏 ====================
 document.querySelector('.close-notice').addEventListener('click', function() {
     document.querySelector('.site-notice').style.display = 'none';
     savePreference('noticeHidden', 'true');
@@ -465,60 +530,33 @@ document.querySelector('.close-notice').addEventListener('click', function() {
 
 // ==================== 键盘快捷键 ====================
 document.addEventListener('keydown', function(e) {
-    // Ctrl+S 或 Cmd+S 保存
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
-        if (isEditMode) {
-            saveContent();
-        }
+        if (isEditMode) saveContent();
     }
-
-    // Esc 退出编辑或关闭弹窗
     if (e.key === 'Escape') {
-        if (document.getElementById('qrModal').style.display !== 'none') {
-            toggleQRCode();
-        }
-        if (isEditMode && confirm('退出编辑模式？')) {
-            cancelEdit();
-        }
+        if (isEditMode && confirm('退出编辑模式？')) cancelEdit();
     }
-
-    // Ctrl+E 进入编辑模式
     if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
         e.preventDefault();
-        if (!isEditMode) {
-            enableEditMode();
-        }
+        if (!isEditMode) enableEditMode();
     }
 });
 
 // ==================== 页面初始化 ====================
 async function initApp() {
-    console.log('伪维基百科 - 初始化中...');
+    console.log('维基百科 - 初始化中...');
     showLoading(true);
-
     try {
-        // 1. 初始化 Supabase
         initSupabase();
-
-        // 2. 加载用户偏好设置
         loadPreferences();
-
-        // 3. 加载文章内容
         await articleManager.getArticle(CONFIG.defaultArticleId);
-
-        // 4. 检查通知栏是否应该显示
         if (localStorage.getItem('wiki_pref_noticeHidden') === 'true') {
             document.querySelector('.site-notice').style.display = 'none';
         }
-
-        // 5. 添加移动端目录按钮
-        if (window.innerWidth <= 768) {
-            addMobileTOCButton();
-        }
-
+        if (window.innerWidth <= 768) addMobileTOCButton();
         showLoading(false);
-        console.log('伪维基百科 - 初始化完成 ✅');
+        console.log('维基百科 - 初始化完成 ✅');
     } catch (error) {
         console.error('初始化失败:', error);
         showLoading(false);
@@ -526,39 +564,24 @@ async function initApp() {
     }
 }
 
-// 移动端目录按钮
 function addMobileTOCButton() {
     const btn = document.createElement('button');
     btn.className = 'mobile-toc-btn';
     btn.innerHTML = '📑 目录';
     btn.style.cssText = `
-        display: none !important;
-        position: fixed;
-        bottom: 140px;
-        right: 15px;
-        background: #3366cc;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 48px;
-        height: 48px;
-        font-size: 18px;
-        cursor: pointer;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-        z-index: 9998;
+        position: fixed; bottom: 140px; right: 15px;
+        background: #3366cc; color: white; border: none;
+        border-radius: 50%; width: 48px; height: 48px;
+        font-size: 18px; cursor: pointer;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.3); z-index: 9998;
     `;
     btn.onclick = () => toggleTOC();
     document.body.appendChild(btn);
-
-    // 在小屏幕上显示
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-    btn.style.display = mediaQuery.matches ? 'block' : 'none';
-    mediaQuery.addListener((mq) => {
-        btn.style.display = mq.matches ? 'block' : 'none';
-    });
+    const mq = window.matchMedia('(max-width: 768px)');
+    btn.style.display = mq.matches ? 'block' : 'none';
+    mq.addListener((e) => { btn.style.display = e.matches ? 'block' : 'none'; });
 }
 
-// DOM 加载完成后初始化
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {

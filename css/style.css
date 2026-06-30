@@ -1,4 +1,4 @@
-/* 伪维基百科 - 主样式表 */
+/* 维基百科 - 主样式表 */
 
 /* CSS变量 */
 :root {
@@ -394,15 +394,52 @@ a:visited {
 /* 内容可编辑状态 */
 [contenteditable="true"] {
     outline: 2px dashed #3366cc;
-    outline-offset: 2px;
+    outline-offset: 3px;
     background: #fffbf0;
     border-radius: 3px;
-    padding: 2px 5px;
+    padding: 3px 6px;
     transition: all 0.2s;
+    cursor: text;
 }
 
 [contenteditable="true"]:hover {
     outline-color: #002bb8;
+}
+
+[contenteditable="true"]:focus {
+    outline-style: solid;
+    outline-color: #3366cc;
+    background: #fffdf5;
+}
+
+/* 可编辑的标题 */
+h1.article-title[contenteditable="true"] {
+    outline: 2px dashed #3366cc;
+    outline-offset: 5px;
+    background: #fffbf0;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+/* 可编辑的infobox */
+.infobox.editing-mode td[data-editable],
+.infobox.editing-mode th[data-editable],
+.infobox.editing-mode caption[data-editable] {
+    outline: 1px dashed #3366cc;
+    outline-offset: 2px;
+    background: #fffbf0;
+    cursor: text;
+}
+
+.infobox.editing-mode td[data-editable]:hover,
+.infobox.editing-mode th[data-editable]:hover {
+    outline-color: #002bb8;
+}
+
+.infobox.editing-mode td[data-editable]:focus,
+.infobox.editing-mode th[data-editable]:focus {
+    outline-style: solid;
+    outline-color: #3366cc;
 }
 
 /* ========== 信息框（Infobox）========== */
@@ -453,6 +490,13 @@ a:visited {
 .infobox-image {
     text-align: center;
     padding: 8px;
+    position: relative;
+}
+
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: default;
 }
 
 .infobox-image img {
@@ -467,6 +511,38 @@ a:visited {
     font-size: 12px;
     color: #54595d;
     margin-top: 5px;
+}
+
+/* 照片上传提示（编辑模式下显示） */
+.photo-upload-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(51, 102, 204, 0.85);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.infobox.editing-mode .image-wrapper {
+    cursor: pointer;
+    opacity: 0.9;
+}
+
+.infobox.editing-mode .image-wrapper:hover {
+    opacity: 0.75;
+}
+
+.infobox.editing-mode .image-wrapper img {
+    border-color: #3366cc;
+    border-style: dashed;
 }
 
 .infobox th {
@@ -488,6 +564,29 @@ a:visited {
 
 .infobox td a {
     color: var(--wiki-link);
+}
+
+/* infobox添加字段按钮（编辑模式） */
+.add-field-btn {
+    display: none;
+    width: 100%;
+    padding: 6px;
+    margin-top: 5px;
+    background: #e8f0fe;
+    border: 1px dashed #3366cc;
+    border-radius: 3px;
+    color: #3366cc;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: center;
+}
+
+.infobox.editing-mode .add-field-btn {
+    display: block;
+}
+
+.add-field-btn:hover {
+    background: #d2e3fc;
 }
 
 /* ========== 编辑操作按钮 ========== */
@@ -633,100 +732,6 @@ a:visited {
 .radio-option.checked span::before {
     content: "● ";
     color: #3366cc;
-}
-
-/* ========== 二维码悬浮按钮 ========== */
-.qr-float-btn {
-    position: fixed;
-    bottom: 80px;
-    right: 20px;
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    z-index: 9999;
-    opacity: 0.85;
-    transition: all 0.3s ease;
-    animation: pulse 2s infinite;
-}
-
-.qr-float-btn:hover {
-    transform: scale(1.1) rotate(10deg);
-    opacity: 1;
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-}
-
-@keyframes pulse {
-    0%, 100% { box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
-    50% { box-shadow: 0 4px 25px rgba(102, 126, 234, 0.7); }
-}
-
-/* ========== 二维码弹窗 ========== */
-.qr-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-}
-
-.qr-modal-content {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    text-align: center;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    max-width: 350px;
-    width: 90%;
-}
-
-.close-qr {
-    float: right;
-    font-size: 26px;
-    cursor: pointer;
-    color: #999;
-    line-height: 1;
-}
-
-.close-qr:hover {
-    color: #333;
-}
-
-.qr-modal h3 {
-    margin-bottom: 20px;
-    font-family: var(--font-sans);
-    color: #333;
-}
-
-#qrCodeContainer {
-    display: inline-block;
-    padding: 15px;
-    background: white;
-    border: 2px solid #eee;
-    border-radius: 8px;
-}
-
-#qrCodeContainer canvas,
-#qrCodeContainer img {
-    display: block;
-}
-
-.qr-hint {
-    margin-top: 15px;
-    font-size: 13px;
-    color: #666;
 }
 
 /* ========== 加载遮罩 ========== */
