@@ -1,0 +1,448 @@
+/* 伪维基百科 - 响应式适配样式 */
+
+/* ========== 平板设备 (768px - 1024px) ========== */
+@media screen and (max-width: 1024px) {
+    .main-container {
+        grid-template-columns: 1fr 200px;
+        gap: 15px;
+    }
+
+    .toc-sidebar {
+        display: none; /* 在平板上隐藏左侧目录 */
+    }
+
+    .article-content {
+        order: -1;
+    }
+
+    /* 信息框在平板上宽度调整 */
+    .infobox {
+        width: 250px;
+        margin: 0 0 15px 15px;
+    }
+}
+
+/* ========== 移动设备 (最大768px) ========== */
+@media screen and (max-width: 768px) {
+    /* 顶部通知栏 */
+    .site-notice {
+        font-size: 11px;
+        padding: 6px 10px;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .close-notice {
+        position: static;
+        transform: none;
+    }
+
+    /* 头部导航 */
+    .header-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 10px 15px;
+    }
+
+    .logo-section .logo {
+        font-size: 20px;
+        text-align: center;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .search-box {
+        max-width: 100%;
+    }
+
+    .search-box input,
+    .search-box button {
+        font-size: 14px;
+    }
+
+    /* 页面标签 */
+    .page-tabs {
+        padding: 0 10px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .page-tabs ul {
+        min-width: max-content;
+    }
+
+    .page-tabs li a,
+    .page-tabs li button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .tabs-right {
+        position: relative;
+    }
+
+    /* 主容器布局改为单列 */
+    .main-container {
+        grid-template-columns: 1fr !important;
+        gap: 15px;
+        padding: 10px 15px;
+    }
+
+    /* 隐藏左右侧边栏，改为其他方式访问 */
+    .toc-sidebar {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 270px;
+        height: 100vh;
+        z-index: 8000;
+        border-radius: 0;
+        transition: left 0.3s ease;
+        box-shadow: none;
+    }
+
+    .toc-sidebar.active {
+        left: 0;
+        box-shadow: 2px 0 20px rgba(0,0,0,0.2);
+        overflow-y: auto;
+    }
+
+    /* 移动端目录切换按钮 */
+    .mobile-toc-btn {
+        display: block !important;
+    }
+
+    /* 右侧工具栏隐藏或折叠 */
+    .right-sidebar {
+        display: none;
+    }
+
+    /* 主内容区 */
+    .article-content {
+        order: initial;
+    }
+
+    /* 文章标题 */
+    .article-title {
+        font-size: 24px;
+    }
+
+    .subtitle-line {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    /* 编辑工具栏 */
+    .article-tools {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .edit-button {
+        flex: 1;
+        text-align: center;
+    }
+
+    /* 正文内容优化移动端阅读体验 */
+    .content-body {
+        font-size: 16px; /* 稍大的字体便于手机阅读 */
+        line-height: 1.75;
+    }
+
+    .content-body p {
+        text-align: left;
+    }
+
+    /* 信息框在移动端全宽显示 */
+    .infobox {
+        float: none;
+        width: 100% !important;
+        margin: 15px 0;
+    }
+
+    .infobox-table caption {
+        font-size: 18px;
+    }
+
+    .infobox th,
+    .infobox td {
+        display: table-row;
+        width: 100%;
+        padding: 6px 10px;
+    }
+
+    .infobox th {
+        background: #eaecf0;
+        font-weight: bold;
+        padding-top: 10px;
+    }
+
+    /* 标题字号调整 */
+    .content-body h2 {
+        font-size: 20px;
+    }
+
+    .content-body h3 {
+        font-size: 17px;
+    }
+
+    .mw-editsection {
+        display: none; /* 移动端隐藏编辑小节链接 */
+    }
+
+    /* 编辑按钮区域 */
+    .edit-actions {
+        flex-direction: column;
+    }
+
+    .save-btn,
+    .cancel-btn {
+        width: 100%;
+        text-align: center;
+        padding: 12px;
+    }
+
+    /* 底部分类 */
+    .categories {
+        font-size: 12px;
+    }
+
+    /* 二维码按钮位置调整（避免遮挡） */
+    .qr-float-btn {
+        bottom: 60px;
+        right: 15px;
+        width: 44px;
+        height: 44px;
+        font-size: 20px;
+    }
+
+    /* 二维码弹窗适配 */
+    .qr-modal-content {
+        padding: 20px;
+        max-width: 90%;
+    }
+}
+
+/* ========== 小屏手机 (最大480px) ========== */
+@media screen and (max-width: 480px) {
+    body {
+        font-size: 13px;
+    }
+
+    .site-notice a {
+        word-break: break-all;
+    }
+
+    .search-box input {
+        font-size: 13px;
+        padding: 7px 10px;
+    }
+
+    .article-title {
+        font-size: 22px;
+    }
+
+    .content-body {
+        font-size: 15px;
+    }
+
+    .intro-text {
+        font-size: 15.5px;
+    }
+
+    .reflist {
+        padding: 10px 15px;
+        font-size: 12px;
+    }
+}
+
+/* ========== 大屏幕优化 ========== */
+@media screen and (min-width: 1400px) {
+    .main-container {
+        max-width: 1500px;
+    }
+
+    .infobox {
+        width: 320px;
+    }
+}
+
+/* ========== 打印样式 ========== */
+@media print {
+    .site-notice,
+    .wiki-header,
+    .page-tabs,
+    .toc-sidebar,
+    .right-sidebar,
+    .article-tools,
+    .edit-actions,
+    .qr-float-btn,
+    .qr-modal,
+    .loading-overlay,
+    .notification {
+        display: none !important;
+    }
+
+    .main-container {
+        grid-template-columns: 1fr !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .infobox {
+        float: right;
+        page-break-inside: avoid;
+    }
+
+    body {
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+
+    a {
+        color: #000;
+        text-decoration: underline;
+    }
+
+    a[href^="http"]:after {
+        content: " (" attr(href) ")";
+        font-size: 9pt;
+        color: #666;
+    }
+}
+
+/* ========== 触摸设备优化 ========== */
+@media (hover: none) and (pointer: coarse) {
+    /* 增大可点击区域 */
+    .page-tabs li a,
+    .page-tabs li button {
+        padding: 12px 14px;
+    }
+
+    .toc-list a {
+        padding: 8px 5px;
+        display: block;
+    }
+
+    .radio-option {
+        padding: 10px 0;
+    }
+
+    /* 隐藏hover效果依赖的视觉提示 */
+    [contenteditable="true"] {
+        outline-width: 3px;
+    }
+}
+
+/* ========== 深色模式支持 ========== */
+@media (prefers-color-scheme: dark) {
+    :root.theme-auto,
+    :root:not([data-theme]) {
+        --wiki-bg: #202122;
+        --wiki-text: #eaecf0;
+        --wiki-link: #809dff;
+        --wiki-link-visited: #c8bfff;
+        --wiki-border: #72777d;
+        --wiki-light-bg: #27292a;
+        --wiki-heading-bg: #2e3031;
+        --wiki-infobox-bg: #27292a;
+        --wiki-infobox-border: #72777d;
+    }
+
+    body[data-theme="dark"] {
+        --wiki-bg: #202122;
+        --wiki-text: #eaecf0;
+        --wiki-link: #809dff;
+        --wiki-link-visited: #c8bfff;
+        --wiki-border: #72777d;
+        --wiki-light-bg: #27292a;
+        --wiki-heading-bg: #2e3031;
+        --wiki-infobox-bg: #27292a;
+        --wiki-infobox-border: #72777d;
+    }
+
+    body[data-theme="dark"] .site-notice {
+        background: linear-gradient(to right, #3a3520, #2a2820);
+        border-color: #5a5540;
+    }
+
+    body[data-theme="dark"] .search-box input {
+        background: #27292a;
+        color: #eaecf0;
+    }
+
+    body[data-theme="dark"] .search-box button {
+        background: #3a3c3d;
+        color: #eaecf0;
+        border-left-color: #72777d;
+    }
+
+    body[data-theme="dark"] .edit-button,
+    body[data-theme="dark"] .cancel-btn {
+        background: #27292a;
+        border-color: #72777d;
+        color: #eaecf0;
+    }
+
+    body[data-theme="dark"] .qr-modal-content {
+        background: #27292a;
+        color: #eaecf0;
+    }
+
+    body[data-theme="dark"] .appearance-panel,
+    body[data-theme="dark"] .text-size-panel,
+    body[data-theme="dark"] .width-panel,
+    body[data-theme="dark"] .color-theme-panel {
+        background: #27292a;
+        border-color: #72777d;
+    }
+
+    body[data-theme="dark"] .reflist {
+        background: #27292a;
+        border-color: #72777d;
+    }
+
+    body[data-theme="dark"] .edit-actions {
+        background: #27292a;
+        border-color: #72777d;
+    }
+
+    body[data-theme="dark"] .infobox-image img {
+        border-color: #72777d;
+    }
+
+    body[data-theme="dark"] .loading-overlay {
+        background: rgba(32,33,34,0.95);
+    }
+}
+
+/* ========== 高对比度模式 ========== */
+@media (prefers-contrast: high) {
+    :root {
+        --wiki-link: #0000EE;
+        --wiki-link-visited: #551A8B;
+        --wiki-border: #000000;
+    }
+
+    a {
+        text-decoration: underline;
+    }
+}
+
+/* ========== 减少动画偏好 ========== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .qr-float-btn {
+        animation: none;
+    }
+}

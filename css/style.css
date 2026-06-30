@@ -1,0 +1,799 @@
+/* 伪维基百科 - 主样式表 */
+
+/* CSS变量 */
+:root {
+    --wiki-bg: #ffffff;
+    --wiki-text: #202122;
+    --wiki-link: #3366cc;
+    --wiki-link-visited: #795cb2;
+    --wiki-border: #a2a9b1;
+    --wiki-light-bg: #f8f9fa;
+    --wiki-heading-bg: #eaecf0;
+    --wiki-infobox-bg: #f8f9fa;
+    --wiki-infobox-border: #a2a9b1;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 全局重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--wiki-text);
+    background-color: var(--wiki-bg);
+}
+
+/* 链接样式 */
+a {
+    color: var(--wiki-link);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:visited {
+    color: var(--wiki-link-visited);
+}
+
+/* ========== 顶部通知栏 ========== */
+.site-notice {
+    background: linear-gradient(to right, #f8e71c, #fff);
+    border-bottom: 1px solid #d4c5a0;
+    padding: 8px 20px;
+    text-align: center;
+    font-size: 13px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.site-notice span {
+    font-weight: bold;
+}
+
+.close-notice {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #666;
+}
+
+/* ========== 顶部导航栏 ========== */
+.wiki-header {
+    background: #fff;
+    border-bottom: 1px solid var(--wiki-border);
+    padding: 10px 0;
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.logo-section .logo {
+    font-size: 24px;
+    font-weight: normal;
+    color: #000;
+    text-decoration: none;
+}
+
+.search-box {
+    flex: 1;
+    max-width: 450px;
+    display: flex;
+    border: 1px solid var(--wiki-border);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    outline: none;
+    font-size: 13px;
+}
+
+.search-box button {
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border: none;
+    border-left: 1px solid var(--wiki-border);
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.search-box button:hover {
+    background: #eaecf0;
+}
+
+/* ========== 页面标签导航 ========== */
+.page-tabs {
+    background: var(--wiki-light-bg);
+    border-bottom: 1px solid var(--wiki-border);
+    padding: 0 20px;
+}
+
+.page-tabs ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.tabs-left {
+    flex: 1;
+}
+
+.tabs-right {
+    gap: 5px;
+}
+
+.page-tabs li {
+    margin-right: 3px;
+}
+
+.page-tabs li a,
+.page-tabs li button {
+    display: block;
+    padding: 10px 14px;
+    color: var(--wiki-link);
+    text-decoration: none;
+    font-size: 13px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.page-tabs li a:hover,
+.page-tabs li button:hover {
+    background: rgba(0,0,0,0.05);
+    text-decoration: none;
+}
+
+.page-tabs li.selected a {
+    color: var(--wiki-text);
+    font-weight: normal;
+}
+
+.page-tabs li.dropdown {
+    position: relative;
+}
+
+.page-tabs li.dropdown .arrow {
+    font-size: 10px;
+    margin-left: 3px;
+}
+
+.page-tabs .icon-link {
+    font-size: 12px;
+}
+
+.more-menu button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px 10px;
+}
+
+/* ========== 主容器布局 ========== */
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 180px 1fr 220px;
+    gap: 25px;
+    padding: 20px;
+    align-items: start;
+}
+
+/* ========== 左侧目录侧边栏 ========== */
+.toc-sidebar {
+    position: sticky;
+    top: 20px;
+    background: var(--wiki-light-bg);
+    border: 1px solid var(--wiki-border);
+    border-radius: 4px;
+    padding: 12px 15px;
+    font-size: 13px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.toc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.toggle-toc {
+    background: none;
+    border: none;
+    color: var(--wiki-link);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.toc-list ol {
+    list-style: decimal inside;
+    padding-left: 0;
+}
+
+.toc-list li {
+    margin: 4px 0;
+    padding-left: 5px;
+}
+
+.toc-list a {
+    color: var(--wiki-link);
+    text-decoration: none;
+}
+
+.toc-list a:hover {
+    text-decoration: underline;
+}
+
+/* ========== 主内容区 ========== */
+.article-content {
+    min-width: 0;
+}
+
+.article-title {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    font-size: 28px;
+    font-weight: normal;
+    border-bottom: 1px solid var(--wiki-border);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.subtitle-line {
+    font-size: 13px;
+    color: #54595d;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.language-selector {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+}
+
+.language-selector select {
+    border: 1px solid var(--wiki-border);
+    border-radius: 2px;
+    padding: 2px 5px;
+    font-size: 12px;
+}
+
+.article-tools {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eaecf0;
+}
+
+.edit-button {
+    background: #f8f9fa;
+    border: 1px solid var(--wiki-border);
+    padding: 6px 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.edit-button:hover {
+    background: #eaecf0;
+    border-color: #72777d;
+}
+
+.last-edited {
+    font-size: 12px;
+    color: #72777d;
+}
+
+/* ========== 正文内容 ========== */
+.content-body {
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.content-body p {
+    margin: 12px 0;
+    text-align: justify;
+}
+
+.content-body sup {
+    font-size: 11px;
+    vertical-align: super;
+    color: var(--wiki-link);
+}
+
+.intro-text {
+    font-size: 14.5px;
+}
+
+.content-body b {
+    font-weight: bold;
+}
+
+.content-body h2 {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    font-size: 22px;
+    font-weight: normal;
+    border-bottom: 1px solid var(--wiki-border);
+    margin: 25px 0 15px 0;
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.content-body h3 {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    font-size: 18px;
+    font-weight: normal;
+    margin: 20px 0 12px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.mw-headline {
+    flex: 1;
+}
+
+.mw-editsection {
+    font-size: 13px;
+    font-family: var(--font-sans);
+    user-select: none;
+}
+
+.mw-editsection a {
+    color: var(--wiki-link);
+    margin-left: 5px;
+}
+
+.mw-editsection-bracket {
+    color: #54595d;
+    margin: 0 2px;
+}
+
+/* 内容可编辑状态 */
+[contenteditable="true"] {
+    outline: 2px dashed #3366cc;
+    outline-offset: 2px;
+    background: #fffbf0;
+    border-radius: 3px;
+    padding: 2px 5px;
+    transition: all 0.2s;
+}
+
+[contenteditable="true"]:hover {
+    outline-color: #002bb8;
+}
+
+/* ========== 信息框（Infobox）========== */
+.infobox {
+    float: right;
+    clear: right;
+    width: 280px;
+    margin: 0 0 15px 20px;
+    border: 1px solid var(--wiki-infobox-border);
+    background: var(--wiki-infobox-bg);
+    padding: 5px;
+    font-size: 13px;
+    line-height: 1.5;
+    border-spacing: 3px;
+}
+
+.infobox-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.infobox-table caption {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    font-size: 17px;
+    font-weight: bold;
+    padding: 8px;
+    text-align: center;
+}
+
+.english-name {
+    font-style: italic;
+    font-size: 14px;
+    font-family: var(--font-sans);
+}
+
+.pronunciation {
+    font-size: 12px;
+    color: #54595d;
+}
+
+.section-header {
+    background: var(--wiki-light-bg);
+    text-align: center;
+    font-weight: bold;
+    padding: 5px 8px;
+}
+
+.infobox-image {
+    text-align: center;
+    padding: 8px;
+}
+
+.infobox-image img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #c8ccd1;
+    padding: 3px;
+    background: #fff;
+}
+
+.image-caption {
+    font-size: 12px;
+    color: #54595d;
+    margin-top: 5px;
+}
+
+.infobox th {
+    white-space: nowrap;
+    text-align: left;
+    padding: 4px 8px;
+    background: transparent;
+    vertical-align: top;
+    font-weight: normal;
+    color: #202122;
+    width: 35%;
+}
+
+.infobox td {
+    padding: 4px 8px;
+    vertical-align: top;
+    line-height: 1.5;
+}
+
+.infobox td a {
+    color: var(--wiki-link);
+}
+
+/* ========== 编辑操作按钮 ========== */
+.edit-actions {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid var(--wiki-border);
+    border-radius: 4px;
+}
+
+.save-btn {
+    background: #3366cc;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.save-btn:hover {
+    background: #2a56b3;
+}
+
+.cancel-btn {
+    background: #f8f9fa;
+    border: 1px solid var(--wiki-border);
+    padding: 10px 24px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cancel-btn:hover {
+    background: #eaecf0;
+}
+
+/* ========== 底部区域 ========== */
+.article-footer {
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #eaecf0;
+    font-size: 13px;
+}
+
+.categories {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.cat-label {
+    font-weight: bold;
+}
+
+.categories a {
+    color: var(--wiki-link);
+    margin: 0 3px;
+}
+
+/* 参考文献列表 */
+.reflist {
+    font-size: 13px;
+    background: var(--wiki-light-bg);
+    border: 1px solid var(--wiki-border);
+    padding: 15px 20px;
+    margin: 15px 0;
+    border-radius: 3px;
+}
+
+.reflist ol {
+    padding-left: 25px;
+}
+
+.reflist li {
+    margin: 5px 0;
+}
+
+.references-small {
+    font-size: 90%;
+}
+
+/* 列表样式 */
+.content-body ul,
+.content-body ol {
+    margin: 10px 0 10px 25px;
+}
+
+.content-body li {
+    margin: 3px 0;
+}
+
+/* ========== 右侧工具栏 ========== */
+.right-sidebar {
+    position: sticky;
+    top: 20px;
+    font-size: 13px;
+}
+
+.appearance-panel,
+.text-size-panel,
+.width-panel,
+.color-theme-panel {
+    background: #fff;
+    border: 1px solid #eaecf0;
+    border-radius: 4px;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+}
+
+.panel-title {
+    font-size: 12px;
+    color: #54595d;
+    margin-bottom: 8px;
+    font-weight: normal;
+}
+
+.panel-option {
+    padding: 5px 10px;
+    background: #eaecf0;
+    border-radius: 3px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.radio-option {
+    display: block;
+    padding: 6px 0;
+    cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 8px;
+    accent-color: #3366cc;
+}
+
+.radio-option.checked span::before {
+    content: "● ";
+    color: #3366cc;
+}
+
+/* ========== 二维码悬浮按钮 ========== */
+.qr-float-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    z-index: 9999;
+    opacity: 0.85;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.qr-float-btn:hover {
+    transform: scale(1.1) rotate(10deg);
+    opacity: 1;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+    50% { box-shadow: 0 4px 25px rgba(102, 126, 234, 0.7); }
+}
+
+/* ========== 二维码弹窗 ========== */
+.qr-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.qr-modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    max-width: 350px;
+    width: 90%;
+}
+
+.close-qr {
+    float: right;
+    font-size: 26px;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+}
+
+.close-qr:hover {
+    color: #333;
+}
+
+.qr-modal h3 {
+    margin-bottom: 20px;
+    font-family: var(--font-sans);
+    color: #333;
+}
+
+#qrCodeContainer {
+    display: inline-block;
+    padding: 15px;
+    background: white;
+    border: 2px solid #eee;
+    border-radius: 8px;
+}
+
+#qrCodeContainer canvas,
+#qrCodeContainer img {
+    display: block;
+}
+
+.qr-hint {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #666;
+}
+
+/* ========== 加载遮罩 ========== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #eaecf0;
+    border-top-color: #3366cc;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+    margin-top: 15px;
+    color: #54595d;
+    font-size: 14px;
+}
+
+/* ========== 通知消息 ========== */
+.notification {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #323232;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 14px;
+    z-index: 6000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    animation: slideUp 0.3s ease;
+}
+
+.notification.success {
+    background: #14854a;
+}
+
+.notification.error {
+    background: #d33;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
